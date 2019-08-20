@@ -7,7 +7,7 @@
 
 set -e 
 
-PS2DIR=~/Backups/PS2
+PS2DIR=~/Games/PS2
 DRIVE=/dev/sr0
 RIP_COMMAND=dd
 IMAGENAME=""

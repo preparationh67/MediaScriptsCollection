@@ -7,7 +7,7 @@
 
 set -e
 
-PSXDIR=~/Backups/PSX
+PSXDIR=~/Games/PSX
 DRIVE=/dev/sr0
 IMAGENAME=""
 IMAGEDIR=""
