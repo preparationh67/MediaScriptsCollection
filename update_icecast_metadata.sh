@@ -11,6 +11,7 @@ param_artist=""
 param_song=""
 param_mount=""
 last_param=""
+album="no"
 
 while [ -n "$1" ]; do
         case "$1" in
@@ -29,8 +30,12 @@ while [ -n "$1" ]; do
                 last_param="mount"
                 shift
                 ;;
+	-l)
+		album="yes"
+		last_param="album"
+		;;
         -h)
-                echo "Usage: $0 -a <Artist Name> -s <Song Name> -m <Icecast Mount Name>"
+                echo "Usage: $0 -a <Artist Name> -s <Song Name> -m <Icecast Mount Name> <-l Toggle Album Mode>"
                 exit 0
                 ;;
         *)
@@ -54,6 +59,11 @@ song="${param_song:-$default_song}"
 artist=${artist// /+}
 song=${song// /+}
 web_mount="${param_mount:-$default_mount}"
+
+if [ "$album" == "yes" ]
+then
+	song=${song}"+(Album)"
+fi
 
 echo  "http://$web_admin:$web_pass@$web_server:$web_port/admin/metadata?mount=/$web_mount&mode=updinfo&artist=$artist&title=$song"
 curl "http://$web_admin:$web_pass@$web_server:$web_port/admin/metadata?mount=/$web_mount&mode=updinfo&artist=$artist&title=$song"
