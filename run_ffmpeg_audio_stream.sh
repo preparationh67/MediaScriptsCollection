@@ -2,15 +2,21 @@
 set -x
 # ice or udp
 RUN_MODE="ice"
-
+ENCODE_MODE="opus"
 # capture options
 SAMPLE_RATE="48000"
-OUTPUT_BITRATE="320k"
-BUFSIZE="1M"
-FFMPEG_OPTS=(-f alsa -i hw:0 -ac 2 -ar $SAMPLE_RATE -acodec libmp3lame -ab $OUTPUT_BITRATE -bufsize $BUFSIZE -content_type audio/mpeg -f mp3)
+OUTPUT_BITRATE="256k"
+FFMPEG_OPTS=(-f alsa -i hw:0 -ac 2 -ar $SAMPLE_RATE)
 # Unused options, maybe useful
 #-tune zerolatency
 #-re
+
+if [ "$ENCODE_MODE" == "mp3" ]
+then
+	FFMPEG_OPTS+=(-acodec libmp3lame -ab $OUTPUT_BITRATE -content_type audio/mpeg -f mp3)
+else
+	FFMPEG_OPTS+=(-acodec libopus -ab "128k" -compression_level 10 -application audio -content_type audio/ogg -f ogg)
+fi
 
 # udp options
 IPADDR="0.0.0.0"
@@ -30,7 +36,7 @@ ICE_OPTS=( -ice_name "${ICE_NAME}" -ice_description "${ICE_DESC}" -ice_url "${IC
 
 if [ "$RUN_MODE" == "ice" ]
 then
-        ffmpeg ${FFMPEG_OPTS[@]} "${ICE_OPTS[@]}"
+        nice -n -15 ffmpeg ${FFMPEG_OPTS[@]} "${ICE_OPTS[@]}"
 else
-        ffmpeg ${FFMPEG_OPTS[@]} udp://$IPADDR:$PORT
+        nice -n -15 ffmpeg ${FFMPEG_OPTS[@]} udp://$IPADDR:$PORT
 fi
