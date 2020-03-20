@@ -15,7 +15,7 @@ if [ "$ENCODE_MODE" == "mp3" ]
 then
 	FFMPEG_OPTS+=(-acodec libmp3lame -ab $OUTPUT_BITRATE -content_type audio/mpeg -f mp3)
 else
-	FFMPEG_OPTS+=(-acodec libovrbis -ab "256k" -compression_level 10 -application audio -content_type audio/ogg -f ogg)
+	FFMPEG_OPTS+=(-acodec libvorbis -ab "256k" -compression_level 10 -application audio -content_type audio/ogg -f ogg)
 fi
 
 # udp options
