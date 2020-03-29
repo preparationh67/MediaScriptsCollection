@@ -6,6 +6,7 @@ ENCODE_MODE="vorbis"
 # capture options
 SAMPLE_RATE="48000"
 OUTPUT_BITRATE="256k"
+VORBIS_QUALITY="8"
 FFMPEG_OPTS=(-f alsa -i hw:0 -ac 2 -ar $SAMPLE_RATE)
 # Unused options, maybe useful
 #-tune zerolatency
@@ -15,7 +16,7 @@ if [ "$ENCODE_MODE" == "mp3" ]
 then
 	FFMPEG_OPTS+=(-acodec libmp3lame -ab $OUTPUT_BITRATE -content_type audio/mpeg -f mp3)
 else
-	FFMPEG_OPTS+=(-acodec libvorbis -ab "256k" -compression_level 10 -application audio -content_type audio/ogg -f ogg)
+	FFMPEG_OPTS+=(-f ogg -acodec libvorbis -q $VORBIS_QUALITY -ab "256k" -compression_level 10 -application audio -content_type audio/ogg)
 fi
 
 # udp options
