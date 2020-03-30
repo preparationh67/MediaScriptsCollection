@@ -2,7 +2,7 @@
 set -x
 # ice or udp
 RUN_MODE="ice"
-
+OGGENC="~/vorbis-tools/oggenc/oggenc"
 # capture options
 SAMPLE_RATE="19200"
 BITRATE="500k"
@@ -32,9 +32,9 @@ ALSA_HW='hw:0,0'
 if [ "$RUN_MODE" == "ice" ]
 then
         # REQUIRES PATCHED OGGENC FROM https://github.com/preparationh67/vorbis-tools
-        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | /home/walter/vorbis-tools/oggenc/oggenc -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" "${ICE_OPTS[@]}"
+        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | $OGGENC -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" "${ICE_OPTS[@]}"
 else
-        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | /home/walter/vorbis-tools/oggenc/oggenc -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" udp://$IPADDR:$PORT
+        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | $OGGENC -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" udp://$IPADDR:$PORT
 fi
 
 # MP3 Version
