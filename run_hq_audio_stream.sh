@@ -5,15 +5,11 @@ RUN_MODE="ice"
 
 # capture options
 SAMPLE_RATE="19200"
-OUTPUT_BITRATE="500k"
+BITRATE="500k"
 VORBIS_QUALITY="10"
 BUFSIZE="1M"
 THREADS=4
-#FFMPEG_OPTS=(-f alsa -i hw:0 -ac 2 -ar $SAMPLE_RATE -threads $THREADS)
-# Unused options, maybe useful
-#-tune zerolatency
-#-re
-FFMPEG_OPTS=(-acodec pcm_s32le -ac 2 -i - -f ogg -acodec libvorbis -ab $OUTPUT_BITRATE  -q $VORBIS_QUALITY -content_type audio/ogg -threads $THREADS)
+FFMPEG_OPTS=(-i - -acodec copy -f ogg -content_type audio/ogg)
 
 # udp options
 IPADDR="0.0.0.0"
@@ -35,7 +31,12 @@ ALSA_HW='hw:0,0'
 
 if [ "$RUN_MODE" == "ice" ]
 then
-        nice -n 15 arecord -D $ALSA_HW -c2 -r$SAMPLE_RATE --disable-resample -fs32_le | ffmpeg ${FFMPEG_OPTS[@]} "${ICE_OPTS[@]}"
+        # REQUIRES PATCHED OGGENC FROM https://github.com/preparationh67/vorbis-tools
+        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | /home/walter/vorbis-tools/oggenc/oggenc -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" "${ICE_OPTS[@]}"
 else
-        nice -n -15 arecord -D $ALSA_HW -c2 -r$SAMPLE_RATE --disable-resample -fs32_le | ffmpeg ${FFMPEG_OPTS[@]} udp://$IPADDR:$PORT
+        nice -n -15 arecord -D $ALSA_HW -c 2 -r $SAMPLE_RATE -f s32_le -t raw -d 0 | /home/walter/vorbis-tools/oggenc/oggenc -r -C 2 -B 32 -R $SAMPLE_RATE -q $VORBIS_QUALITY -b $BITRATE - | ffmpeg "${FFMPEG_OPTS[@]}" udp://$IPADDR:$PORT
 fi
+
+# MP3 Version
+#nice -n 15 arecord -D hw:0,0 -c 2 -r 192000 -f s32_le -t raw -d 0 | lame -r -s 192 --bitwidth 32 --signed --little-endian -V 0 -b 128 -B 320 - | ffmpeg "${ICE_OPTS[@]}"
+
