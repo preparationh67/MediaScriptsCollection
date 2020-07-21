@@ -4,7 +4,7 @@ set -x
 RUN_MODE="ice"
 OGGENC="~/vorbis-tools/oggenc/oggenc"
 # capture options
-SAMPLE_RATE="19200"
+SAMPLE_RATE="192000"
 BITRATE="500k"
 VORBIS_QUALITY="10"
 BUFSIZE="1M"
