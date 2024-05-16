@@ -30,7 +30,7 @@ while [ -n "$1" ];do
                         echo "Using default time limit: $TIMELIMIT"
                         ;;
                 -f)
-                        if [[ $WAV_MODE -eq 0]]
+                        if [[ $WAV_MODE -eq 0 ]]
                         then
                                 FILENAME="$2.raw"
                         else
