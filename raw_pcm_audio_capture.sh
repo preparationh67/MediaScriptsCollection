@@ -24,6 +24,10 @@ while [ -n "$1" ];do
                         TIMED=1
                         shift
                         ;;
+                -T)
+                        TIMED=1
+                        echo "Using default time limit: $TIMELIMIT"
+                        ;;
                 -f)
                         FILENAME="$2.raw"
                         shift
